@@ -14,18 +14,22 @@
             --text-glow: 0 0 10px var(--bloom-color);
         } 
 
-        /* —— 页面改成铺满浏览器，不再用 flex 居中 —— */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        /* 整个页面背景 + 字体 */
         body { 
             background-color: #0c0c0c; 
             color: #f8fafc; 
             font-family: 'Noto Serif SC', serif; 
-            margin: 0; 
             user-select: none; 
-            height: 100vh;
             overflow: hidden;
         } 
 
-        /* —— 游戏容器始终占满整个视口 —— */
+        /* 游戏容器：始终占满整个浏览器窗口 */
         #game-container { 
             position: relative; 
             width: 100vw; 
@@ -44,7 +48,7 @@
             overflow: hidden;
         } 
 
-        /* 加载指示器 */
+        /* 图片加载指示器 */
         #loading-indicator {
             position: absolute;
             top: 20px;
@@ -56,6 +60,7 @@
             z-index: 30;
         }
 
+        /* 开场字幕层 */
         #intro-overlay {
             position: absolute;
             inset: 0;
@@ -85,6 +90,7 @@
 
         .intro-text.fade-in { opacity: 1; }
 
+        /* 对话框 */
         .dialogue-box { 
             position: absolute; 
             bottom: 30px; 
@@ -144,6 +150,7 @@
 
         .inner-thought { font-style: italic; color: #cbd5e1; } 
 
+        /* 选项容器 */
         .choice-container { 
             position: absolute; 
             top: 45%; 
@@ -228,7 +235,7 @@
             to { opacity: 1; transform: translateY(0); filter: blur(0); } 
         }
 
-        /* 小屏简单适配（可选） */
+        /* 小屏简单适配 */
         @media (max-width: 768px) {
             .dialogue-box {
                 bottom: 10px;
@@ -390,17 +397,17 @@
             });
         }
 
-        // 更安全的图片预加载：先绑事件，再设 src
+        // 更安全的图片预加载
         function preloadImage(url) {
             return new Promise((resolve) => {
                 const img = new Image();
                 img.onload = () => resolve(true);
-                img.onerror = () => resolve(false); // 出错也要 resolve，避免卡死
+                img.onerror = () => resolve(false);
                 img.src = url;
             });
         }
 
-        // 场景渲染
+        // 渲染场景
         async function renderScene() {
             if (state.isIntroActive || state.isEnding) return;
             const scene = scenes[state.step];
@@ -427,7 +434,6 @@
                 nameEl.innerText = scene.name || "";
                 state.currentHTML = scene.thought ? `<span class="inner-thought">${scene.text}</span>` : scene.text;
                 
-                // 图片确定在缓存后，再启动打字机
                 typeWriter(textEl, state.currentHTML, 40);
                 
                 if (typeof scene.action === 'function') scene.action();
@@ -436,7 +442,7 @@
             }
         }
 
-        // 下一步逻辑：先快进，再换场景
+        // 下一步
         async function nextStep() {
             if (state.isIntroActive || state.isEnding || state.isChangingScene) return;
             
@@ -463,7 +469,7 @@
             }
         }
 
-        // 结局处理逻辑
+        // 结局处理
         async function triggerEnding(title) {
             state.isEnding = true;
             const dialogueBox = document.getElementById('dialogue-box');
