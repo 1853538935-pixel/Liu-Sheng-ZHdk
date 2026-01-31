@@ -632,5 +632,54 @@
             });
         }
 
-        function runIntro()
+        function runIntro() {
+            const introEl = document.getElementById('intro-text-element');
+            const introOverlay = document.getElementById('intro-overlay');
+            const content = [
+                { text: `安适纪元 19 年。\n\n在人类长期回避现实过程中，\n气候系统逐步失衡，世界由此走向终结。`, stay: 3500 },
+                { text: `管理者启动了「泡泡计划」，\n将幸存者安置进封闭的球形城市。`, stay: 3000 },
+                { text: `世界因此维持在一种稳定而安适的状态之中。`, stay: 2500 }
+            ];
+            
+            let currentPage = 0;
+            function playPage() {
+                if (currentPage >= content.length) {
+                    setTimeout(() => {
+                        introOverlay.style.display = 'none';
+                        state.isIntroActive = false;
+                        renderScene();
+                    }, 1000);
+                    return;
+                }
+                const page = content[currentPage];
+                introEl.innerText = page.text;
+                introEl.className = 'intro-text'; 
+                setTimeout(() => introEl.classList.add('fade-in'), 50);
+                
+                setTimeout(() => {
+                    introEl.classList.remove('fade-in');
+                    setTimeout(() => {
+                        currentPage++;
+                        playPage();
+                    }, 800);
+                }, 1000 + page.stay);
+            }
+            playPage();
+        }
+        
+        function flash() {
+            const f = document.getElementById('flash-effect');
+            f.style.display='block';
+            setTimeout(()=>f.style.display='none', 600);
+        }
 
+        function flashRed() {
+            const f = document.getElementById('flash-red-effect');
+            f.style.display='block';
+            setTimeout(()=>f.style.display='none', 800);
+        }
+
+        window.onload = runIntro;
+    </script> 
+</body> 
+</html>
